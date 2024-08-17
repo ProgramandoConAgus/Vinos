@@ -83,7 +83,8 @@
 
 .topbar {
     padding: 20px;
-    border-radius: 230px 100px;
+    right: 0px;
+    left:0px;
 }
 
 .topbar .top-info {
