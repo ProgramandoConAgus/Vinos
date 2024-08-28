@@ -1,8 +1,29 @@
 <?php
 session_start();
-
+include('con_db.php');
 $numero_recibido=$_GET['numero'];
 
+if(isset($_SESSION['idBodega'])){
+    $sql = "SELECT habilitado FROM bodegas WHERE idBodega = ?";
+    $stmt = $conex->prepare($sql);
+    $stmt->bind_param('i', $_SESSION['idBodega']);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($result) {
+        if ($result->num_rows > 0) {
+            $user = $result->fetch_assoc();
+			if($user['habilitado']!=1){
+                $_SESSION['notificacion']="Permisos insuficientes";
+                header("Location: index.php");
+            }
+            
+        }
+    }
+}
+else{
+    $_SESSION['notificacion']="Debe iniciar sesion primero";
+    header("Location: register.php");
+}
 
 
 ?>
@@ -91,136 +112,42 @@ $numero_recibido=$_GET['numero'];
 
         <!-- Single Page Header start -->
         <div class="container-fluid page-header py-5">
-            <?php
-            if($numero_recibido==2){
-            ?>
-            <h1 class="text-center text-white display-6">Registro</h1>
-            <?php
-            }else{
-            ?>
-            <h1 class="text-center text-white display-6">Inicio de Sesion</h1>
-            <?php
-            }
-            ?>
+            <h1 class="text-center text-white display-6">Cargar nuevos Vinos</h1>
         </div>
-        <br>
-        <div class="container ">
-			<!--begin::Card body-->
-            <div class="container">		
-                <!-- Single Page Header End -->                            
-                <ul class="nav d-flex justify-content-center align-items-center">
-                    <!--begin::Nav item-->
-                    <li class="nav-item my-3">
-                        <button class="register"><a class="btn text-uppercase" href="register.php?numero=1">Iniciar Sesion</a></button>
-                    </li>
-                    <!--end::Nav item-->
-                    <!--begin::Nav item-->
-                    <li class="nav-item my-3">
-                        <button class="register"><a class="btn text-uppercase" href="register.php?numero=2">Registrarse</a></button>
-                    </li>
-                    <!--end::Nav item-->
-                </ul>
-            </div>
-        </div>
-        <?php
-            if($numero_recibido==2){
-        ?>
         <!-- Checkout Page Start -->
         <div class="container-fluid">
             <div class="container ">
-                <form action="register_validacion.php" method="post">
+                <form action="cargarVinoslogica.php" method="post" enctype="multipart/form-data">
                     <div class="row g-5">
                         <div class="col">         
                             <div class="form-item">  
-                                <label class="form-label my-3">Nombre Bodega<sup>*</sup></label>
-                                <input type="text" class="form-control"name="nombre_bodega" placeholder="Name">
+                                <label class="form-label my-3">Nombre Vino<sup>*</sup></label>
+                                <input type="text" class="form-control"name="nombreVino" placeholder="Name">
                             </div>
                             <div class="form-item">
-                                <label class="form-label my-3">Contraseña<sup>*</sup></label>
-                                <input type="password" placeholder="Password" name="password" class="form-control" required>
+                                <label class="form-label my-3">Descripcion<sup>*</sup></label>
+                                <input type="text" placeholder="Descripcion" name="descripcion" class="form-control" required>
                             </div>
                             <div class="form-item">
-                                <label class="form-label my-3">Confirmar Contraseña<sup>*</sup></label>
-                                <input type="password" placeholder="Confirm Password" name="confirm_password" class="form-control" required>
+                                <label class="form-label my-3">Precio Del vino<sup>*</sup></label>
+                                <input type="text" placeholder="$" name="precioVino" class="form-control" required>
                             </div>
                             <div class="form-item">
-                                <label class="form-label my-3">Pais<sup>*</sup></label>
-                                <input type="text" class="form-control" placeholder="Country" name="pais">
-                            </div>
-                            <div class="form-item">
-                                <label class="form-label my-3">Codigo Postal/zip<sup>*</sup></label>
-                                <input type="text" class="form-control" placeholder="X0000" name="postal">
+                                <label class="form-label my-3">Imagen del Vino<sup>*</sup></label>
+                                <input type="file" class="form-control" placeholder="Imagen" name="imagen">
                             </div>
                             
+                            
                         </div>
-                        <div class="col"> 
-                            <div class="form-item">
-                                <label class="form-label my-3">Ciudad<sup>*</sup></label>
-                                <input type="text" class="form-control" placeholder="City" name="ciudad">
-                            </div>
-                            <div class="form-item">
-                                <label class="form-label my-3">Calle <sup>*</sup></label>
-                                <input type="text" class="form-control" placeholder="Nombre de la Calle" name="calle">
-                            </div>
-                            <div class="form-item">
-                                <label class="form-label my-3">Numero <sup>*</sup></label>
-                                <input type="text" class="form-control" placeholder="Numero de calle" name="calle_num">
-                            </div>
-                            <div class="form-item">
-                                <label class="form-label my-3">Direccion de Email<sup>*</sup></label>
-                                <input type="email" class="form-control" placeholder="your@email.com" name="email">
-                            </div>
-                            <div class="form-item">
-                                <label class="form-label my-3">Numero de Telefono<sup>*</sup></label>
-                                <input type="tel" id="telefono" class="form-control" name="telefono" placeholder="123-456-7890" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" required>
-                            </div>
+                        <div class="row g-4 text-center align-items-center justify-content-center pt-4">
+                            <button type="submit" class="btn border-secondary py-3 px-4 text-uppercase w-100 text-primary">Cargar</button>
                         </div>
-                          
-                            <div class="row g-4 text-center align-items-center justify-content-center pt-4">
-                                <button type="submit" class="btn border-secondary py-3 px-4 text-uppercase w-100 text-primary">Registrarse</button>
-                            </div>
                     
                     </div>
                 </form>
             </div>
         </div>
         <!-- Checkout Page End -->
-        <?php
-            }
-            else{
-        ?>
-        <!-- Checkout Page Start -->
-        <div class="container-fluid">
-            <div class="container">
-
-                <form action="inicio_sesion.php" method="post">
-                    <div class="row g-5">
-                        <div class="col">         
-                            <div class="form-item">  
-                                <label class="form-label my-3">Nombre Bodega<sup>*</sup></label>
-                                <input type="text" class="form-control" name="nombre_bodega" placeholder="Name">
-                            </div>
-                            <div class="form-item">
-                                <label class="form-label my-3">Direccion de Email<sup>*</sup></label>
-                                <input type="email" class="form-control" name="email" placeholder="your@email.com">
-                            </div>
-                            <div class="form-item">
-                                <label class="form-label my-3">Contraseña<sup>*</sup></label>
-                                <input type="password" placeholder="Password" name="password" class="form-control" required>
-                            </div>
-                        </div>
-                        <div class="row g-4 text-center align-items-center justify-content-center pt-4">
-                            <button type="submit" class="btn border-secondary py-3 px-4 text-uppercase w-100 text-primary">Registrarse</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-        <!-- Checkout Page End -->
-         <?php
-            }
-         ?>
-
 
         <!-- Footer Start -->
         <div class="container-fluid bg-dark text-white-50 footer pt-5 mt-5">
@@ -358,8 +285,3 @@ $numero_recibido=$_GET['numero'];
 
 </html>
 
-
-
-<?php
-$_SESSION['notificacion']=null
-?>

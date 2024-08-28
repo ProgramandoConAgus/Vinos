@@ -125,6 +125,8 @@
 }
 
 .navbar {
+    margin-left: 30px;
+    margin-right: 60px;
     height: 100px;
     border-bottom: 1px solid rgba(255, 255, 255, .1);
 }
@@ -495,3 +497,19 @@
     line-height: 35px;
 }
 /*** Footer End ***/
+
+
+.register{
+    border-radius: 15px;
+    margin-left: 50px;
+    margin-right: 50px;
+    background-color: white;
+    padding-right: 20px;
+    padding-left: 20px;
+    border-color: #901050;
+    border-width: 2px;
+}
+.register:hover{
+    animation-delay: 10ms;
+    background-color: #80004095;
+}
